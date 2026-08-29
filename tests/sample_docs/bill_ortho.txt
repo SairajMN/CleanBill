@@ -1,0 +1,14 @@
+NORTHBROOK ORTHOPEDICS
+Statement of Account — Statement Date: 07/10/2026
+
+Patient: Jane Doe        DOB: 04/02/1985        Account: 90417
+Billing questions: accounts@northbrookortho.example
+
+Service Date   Description                              Code      Billed
+06/25/2026     X-ray, knee, 3 views                     73564     $265.00
+06/25/2026     Knee joint injection                     20610     $410.00
+06/25/2026     Crutches, pair, with tips                E0110      $95.00
+
+Total billed: $770.00
+Amount due from patient: $155.00
+Insurance payment applied: $615.00

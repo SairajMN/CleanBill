@@ -1,0 +1,4 @@
+SPRING VALLEY CLINIC — Appointment Reminder
+You have an upcoming appointment on 09/12/2026 with Dr. Alvarez.
+Reply CONFIRM to confirm or RESCHEDULE to pick a new time.
+Stop to unsubscribe.

@@ -1,0 +1,16 @@
+RIVERSIDE MEDICAL GROUP
+Patient Statement — Statement Date: 03/14/2026
+
+Patient: Jane Doe        DOB: 04/02/1985        Account: 88412
+Billing questions: sairaj.nadaf@gmail.com
+
+Service Date   Description                              Code      Billed
+02/10/2026     Office visit, established patient        99213     $180.00
+02/10/2026     Electrocardiogram, routine ECG           93000      $95.00
+02/10/2026     Electrocardiogram, routine ECG           93000      $95.00
+02/10/2026     Complete blood count                     85025      $42.00
+02/10/2026     Influenza vaccine                        90686       $0.00
+
+Total billed: $412.00
+Amount due from patient: $112.00
+Please remit payment within 30 days.

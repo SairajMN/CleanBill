@@ -1,0 +1,11 @@
+From: billing@riversidemed.example
+Subject: RE: Dispute of account 88412
+
+Dear Ms. Doe,
+
+Thank you for your letter regarding your February statement. We have opened a
+review of account 88412 with our billing department and will respond within
+14 business days with a corrected statement if an error is found.
+
+Regards,
+Riverside Medical Group Billing Office

@@ -1,0 +1,14 @@
+PACIFIC SURGICAL CENTER
+Patient Invoice — Invoice Date: 07/02/2026
+
+Patient: Jane Doe        DOB: 04/02/1985        Account: 55231
+Billing questions: billing@pacificsurgical.example
+
+Service Date   Description                              Code      Billed
+06/18/2026     Consultation, new patient                99204     $320.00
+06/18/2026     Consultation, new patient                99204     $320.00
+06/18/2026     Local anesthesia                         00100      $85.00
+
+Total billed: $725.00
+Amount due from patient: $725.00
+Payment due upon receipt.

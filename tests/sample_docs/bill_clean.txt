@@ -1,0 +1,13 @@
+CEDAR FAMILY PRACTICE
+Patient Statement — Statement Date: 07/22/2026
+
+Patient: Jane Doe        DOB: 04/02/1985        Account: 31866
+Billing questions: billing@cedarfamily.example
+
+Service Date   Description                              Code      Billed
+07/03/2026     Preventive visit, established patient    99396     $210.00
+07/03/2026     Lipid panel                              80061      $58.00
+
+Total billed: $268.00
+Amount due from patient: $0.00
+Preventive services covered at 100% — no payment due.

@@ -1,0 +1,11 @@
+BLUE SHIELD OF THE PACIFIC
+EXPLANATION OF BENEFITS — Claim finalized: 07/08/2026
+
+Member: Jane Doe          Provider: Northbrook Orthopedics
+
+Procedure   Billed      Allowed     Plan Paid    Patient Owes
+73564       $265.00     $180.00     $144.00      $36.00
+20610       $410.00     $290.00     $232.00      $58.00
+
+This is not a bill.
+Note: Durable medical equipment (E0110) is not covered under your plan.

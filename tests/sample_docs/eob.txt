@@ -1,0 +1,10 @@
+BLUE SHIELD OF THE PACIFIC
+EXPLANATION OF BENEFITS — Claim finalized: 03/20/2026
+
+Member: Jane Doe          Provider: Riverside Medical Group
+
+Procedure   Billed      Allowed     Plan Paid    Patient Owes
+99213       $180.00     $140.00     $112.00      $28.00
+93000       $95.00      $60.00      $48.00       $12.00
+85025       $42.00      $30.00      $24.00       $6.00
+
