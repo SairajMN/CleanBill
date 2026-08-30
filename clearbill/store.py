@@ -132,7 +132,9 @@ def find_awaiting_eob_case(provider_name, patient_name):
     for case in open_cases():
         bill = case.get("docs", {}).get("bill")
         if case["state"] == config.AWAITING_DOCS and bill:
-            if bill["provider_name"] == provider_name and bill["patient_name"] == patient_name:
+            # case-insensitive: EOBs and bills rarely agree on capitalization
+            if (bill["provider_name"].lower() == provider_name.lower()
+                    and bill["patient_name"].lower() == patient_name.lower()):
                 return case
     return None
 

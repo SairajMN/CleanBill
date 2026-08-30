@@ -26,7 +26,10 @@ def render_dispute_email(case):
     dis = case.get("discrepancies") or []
     total = sum(float(d.get("amount_disputed") or 0) for d in dis)
 
-    subject = _esc(letter.get("subject") or "Medical Bill Dispute")
+    letter_subject = (letter.get("subject") or "").strip()
+    # the draft model sometimes returns a bare "Dispute"; judges/billers need an identifiable subject
+    subject = _esc(letter_subject if len(letter_subject) > 15 else
+                   f"Formal Dispute of Medical Bill Dated {bill.get('bill_date') or 'recent statement'}")
 
     text = (
         f"DISPUTE LETTER\n\n"

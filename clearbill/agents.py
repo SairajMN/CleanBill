@@ -40,7 +40,8 @@ Rules:
 - One entry per line item, in document order. If the same service appears twice, list it twice.
 - amount_billed: what the provider charged. insurance_paid / patient_responsibility from the EOB if present, else 0.
 - total_billed and total_patient_responsibility must equal the sum over line items; if the document states totals, use those.
-- code is the CPT/HCPCS code, empty if none shown. contact_email is the billing office email, empty if none shown."""
+- code is the CPT/HCPCS code, empty if none shown.
+- contact_email: copy the billing office email ONLY if it is explicitly printed in the document, character for character. Never guess, never construct one from a domain or name; if not printed, use the empty string. This address receives a legal dispute letter, so a wrong value causes a misdelivery."""
 
 RECON_INSTR = """You are a medical billing auditor. You receive the extracted bill and EOB as JSON.
 Flag these issue types only:

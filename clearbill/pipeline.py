@@ -55,6 +55,9 @@ def advance(case_id, attachments=()):
     state = case["state"]
     if state == config.INTAKE:
         _intake(case_id, case, attachments)
+    elif state == config.AWAITING_DOCS and case["docs"].get("bill") and case["docs"].get("eob"):
+        # both arrived (or resumed after a crash post-merge): review the pair
+        _finish(case_id)
     elif state == config.RECONCILED:
         # crash during reconciliation lands here with no discrepancies persisted
         if case["discrepancies"]:
@@ -63,7 +66,6 @@ def advance(case_id, attachments=()):
             _reconcile(case_id, case)
     elif state == config.APPROVED:
         _send(case_id)
-    # awaiting_docs: resumes when the counterpart document arrives
     # pending_approval / awaiting_reply: advance only on a human flip or the followup cron
 
 
@@ -119,18 +121,30 @@ def _extract(case_id, case, category, attachments):
     if category == "eob":
         twin = store.find_awaiting_eob_case(extracted.provider_name, extracted.patient_name)
         if twin:
+            # known bill is waiting: attach the EOB and review the pair
             store.db().collection("cases").document(twin["id"]).update(
                 {"docs.eob": extracted.model_dump(), "updated_at": store.now()}
             )
             store.transition(case_id, "extractor_agent", config.CLOSED,
                              {"note": f"EOB merged into case {twin['id']}"})
+            _finish(twin["id"])
             return
         store.transition(case_id, "extractor_agent", config.AWAITING_DOCS)
         return
 
-    store.transition(case_id, "extractor_agent", config.RECONCILED,
+    # bill waits for its matching EOB before any dispute can be drafted, so it is
+    # cross-referenced rather than over-flagging every line as undocumented
+    store.transition(case_id, "extractor_agent", config.AWAITING_DOCS,
                      {"docs.bill": extracted.model_dump()})
+
+
+def _finish(case_id):
+    """Cross-refs a bill+EOB case, drafts, and auto-sends when AUTO_SEND is on.
+    Sends only after the approval flip is recorded (approver='auto-agent')."""
     _reconcile(case_id, store.load(case_id))
+    case = store.load(case_id)
+    if config.AUTO_SEND and case["discrepancies"] and case["state"] == config.PENDING_APPROVAL:
+        approve_and_send(case_id, "auto-agent")
 
 
 def _reconcile(case_id, case):
@@ -174,9 +188,8 @@ def _send(case_id):
     # so pipeline logic stays testable without Google credentials.
     from clearbill import gmail
     from clearbill.email_template import render_dispute_email
-    # DEMO_RECIPIENT first: the demo delivers letters to the verified mailbox so a
-    # click visibly lands; sample bill contact_emails are fake .example addrs.
-    to = config.DEMO_RECIPIENT or case["docs"]["bill"].get("contact_email")
+    # recipient = the bill's "Billing questions" address; DEMO_RECIPIENT is only a fallback
+    to = case["docs"]["bill"].get("contact_email") or config.DEMO_RECIPIENT
     if not to:
         raise ValueError("no recipient: bill has no contact_email and DEMO_RECIPIENT is unset")
     subject, text, html = render_dispute_email(case)

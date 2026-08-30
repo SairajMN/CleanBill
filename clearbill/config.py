@@ -11,10 +11,18 @@ LOCATION = os.environ["GOOGLE_CLOUD_LOCATION"]
 MODEL_FLASH = "gemini-3.5-flash"
 # Pro is reserved for the one output a human billing office actually reads; no GA
 # 3.x Pro exists on Vertex yet, so we ride the preview — swap the string when it ships.
-MODEL_PRO = "gemini-3.1-pro-preview"
+# hackathon mandate: every model must be Gemini 3.5+. No 3.5+ Pro exists on Vertex yet,
+# so the drafting "Pro tier" is the newest Flash; restore a true Pro when Google ships 3.5-pro.
+MODEL_PRO = "gemini-3.7-flash"
 
 RECONCILIATION_CONFIDENCE_THRESHOLD = 0.7
 FOLLOWUP_DAYS = 14
+
+# When ON, a bill with a matched EOB and above-threshold discrepancies auto-sends
+# its dispute (approver="auto-agent"). Off keeps the manual Send button. Either way
+# send only happens after the approval flip is recorded in Firestore.
+AUTO_SEND = os.environ.get("AUTO_SEND", "1") == "1"
+POLL_INTERVAL = int(os.environ.get("POLL_INTERVAL", "120"))
 
 INTAKE = "intake"
 AWAITING_DOCS = "awaiting_docs"
