@@ -80,7 +80,7 @@ pipeline.advance({case_id2!r})
     # 4. flip the gate -> full send path runs (send captured, not emailed)
     sent = []
     from clearbill import gmail
-    gmail.send = lambda to, s, b: sent.append((to, s, b))
+    gmail.send = lambda to, s, h, t: sent.append((to, s, h))
     pl.approve_and_send(case_id2, "sahil")
     case2 = store.load(case_id2)
     assert case2["state"] == config.AWAITING_REPLY

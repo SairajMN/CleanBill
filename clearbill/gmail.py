@@ -61,10 +61,13 @@ def mark_read(message_id):
         userId="me", id=message_id, body={"removeLabelIds": ["UNREAD"]}))
 
 
-def send(to, subject, body):
+def send(to, subject, html_body, text_body=None):
     msg = EmailMessage()
     msg["To"] = to
     msg["Subject"] = subject
-    msg.set_content(body)
+    msg.set_content(text_body if text_body is not None else html_body)
+    if html_body:
+        # email clients ignore <style>; we ship full inline-styled HTML alongside plain text
+        msg.add_alternative(html_body, subtype="html")
     raw = base64.urlsafe_b64encode(msg.as_bytes()).decode()
     _exec(_svc().users().messages().send(userId="me", body={"raw": raw}))

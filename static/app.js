@@ -82,7 +82,8 @@ $("send").onclick = async () => {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ approver: "web-user" })
   });
-  const j = await r.json();
+  let j = {};
+  try { j = await r.json(); } catch (_) {}  // 500s come back as plain text, not JSON
   if (!r.ok) { $("sendnote").textContent = j.detail || "send failed"; $("send").disabled = false; return; }
   showCase(selected); loadCases();
 };

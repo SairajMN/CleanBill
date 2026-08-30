@@ -173,10 +173,14 @@ def _send(case_id):
     # gmail auth is operator-local (OAuth user scopes); keep it out of the import path
     # so pipeline logic stays testable without Google credentials.
     from clearbill import gmail
-    to = case["docs"]["bill"].get("contact_email") or config.DEMO_RECIPIENT
+    from clearbill.email_template import render_dispute_email
+    # DEMO_RECIPIENT first: the demo delivers letters to the verified mailbox so a
+    # click visibly lands; sample bill contact_emails are fake .example addrs.
+    to = config.DEMO_RECIPIENT or case["docs"]["bill"].get("contact_email")
     if not to:
         raise ValueError("no recipient: bill has no contact_email and DEMO_RECIPIENT is unset")
-    gmail.send(to, case["letter"]["subject"], case["letter"]["body"])
+    subject, text, html = render_dispute_email(case)
+    gmail.send(to, subject, html, text)
     store.transition(case_id, "action_agent", config.AWAITING_REPLY, {
         "sent_at": store.now(),
         "followup_due": store.now() + timedelta(days=config.FOLLOWUP_DAYS),

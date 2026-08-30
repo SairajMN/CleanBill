@@ -100,6 +100,13 @@ def ingest():
 def approve(case_id: str, req: Approval):
     try:
         pipeline.approve_and_send(case_id, req.approver)
+    except HttpError as e:
+        # Cloud Run's service account has no mailbox; real sends run under local OAuth
+        raise HTTPException(
+            status_code=503,
+            detail="Sending needs the operator's Gmail OAuth — run the app locally "
+                   f"(clearbill/README.md). Underlying error: {e.resp.status} {e.reason}",
+        )
     except (ValueError, PermissionError) as e:
         raise HTTPException(status_code=404 if "no case" in str(e) else 409, detail=str(e))
     return store.load(case_id)
@@ -150,6 +157,13 @@ def ingest():
 def approve(case_id: str, req: Approval):
     try:
         pipeline.approve_and_send(case_id, req.approver)
+    except HttpError as e:
+        # Cloud Run's service account has no mailbox; real sends run under local OAuth
+        raise HTTPException(
+            status_code=503,
+            detail="Sending needs the operator's Gmail OAuth — run the app locally "
+                   f"(clearbill/README.md). Underlying error: {e.resp.status} {e.reason}",
+        )
     except (ValueError, PermissionError) as e:
         raise HTTPException(status_code=404 if "no case" in str(e) else 409, detail=str(e))
     return store.load(case_id)

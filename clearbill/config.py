@@ -31,5 +31,6 @@ GMAIL_QUERY = (
     'OR "patient responsibility" OR billing)'
 )
 
-# Fallback send target when the bill shows no billing-office email.
-DEMO_RECIPIENT = os.environ.get("DEMO_RECIPIENT", "")
+# Send target for the demo: letters are delivered here (operator mailbox) regardless
+# of the bill contact_email, so a click is always verifiable.
+DEMO_RECIPIENT = os.environ.get("DEMO_RECIPIENT", "resell.it.here@gmail.com")
