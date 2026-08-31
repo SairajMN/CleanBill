@@ -129,13 +129,24 @@ def _extract(case_id, case, category, attachments):
                              {"note": f"EOB merged into case {twin['id']}"})
             _finish(twin["id"])
             return
-        store.transition(case_id, "extractor_agent", config.AWAITING_DOCS)
+        # no bill yet: park with the EOB persisted; the bill's extraction will find us
+        store.transition(case_id, "extractor_agent", config.AWAITING_DOCS,
+                         {"docs.eob": extracted.model_dump()})
         return
 
     # bill waits for its matching EOB before any dispute can be drafted, so it is
     # cross-referenced rather than over-flagging every line as undocumented
     store.transition(case_id, "extractor_agent", config.AWAITING_DOCS,
                      {"docs.bill": extracted.model_dump()})
+    # reverse merge: the EOB may have arrived while this bill was still extracting
+    twin = store.find_awaiting_bill_case(extracted.provider_name, extracted.patient_name)
+    if twin:
+        store.db().collection("cases").document(case_id).update(
+            {"docs.eob": twin["docs"]["eob"], "updated_at": store.now()}
+        )
+        store.transition(twin["id"], "extractor_agent", config.CLOSED,
+                         {"note": f"EOB case merged into bill case {case_id}"})
+        _finish(case_id)
 
 
 def _finish(case_id):

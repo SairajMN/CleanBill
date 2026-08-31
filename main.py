@@ -35,12 +35,15 @@ def _poll_loop():
     while not _stop_polling.is_set():
         try:
             _poll_once()
-        except Exception:
-            pass  # transient Gmail/no-net errors must not kill the loop
+        except Exception as e:
+            # transient Gmail/no-net errors must not kill the loop, but silence hides bugs
+            print(f'{{"poller_error": {e!r}}}', flush=True)
         _stop_polling.wait(config.POLL_INTERVAL)
 
 
 def _poll_once():
+    # resume parked cases first: a 429/crash mid-cycle leaves them mid-pipeline
+    pipeline.resume()
     try:
         unread = gmail.fetch_unread()
     except HttpError:

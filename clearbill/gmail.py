@@ -18,7 +18,7 @@ def _exec(request):
     return request.execute(num_retries=1)
 
 
-def fetch_unread(max_results=10):
+def fetch_unread(max_results=25):
     svc = _svc()
     ids = _exec(svc.users().messages().list(userId="me", q=config.GMAIL_QUERY,
                                             maxResults=max_results)).get("messages", [])

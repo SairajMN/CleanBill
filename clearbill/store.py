@@ -1,5 +1,6 @@
 import hashlib
 import json
+import re
 from datetime import datetime, timedelta, timezone
 
 from google.api_core.exceptions import AlreadyExists
@@ -128,14 +129,32 @@ def due_followups():
     return [c for c in cases if c.get("followup_due") and c["followup_due"] <= now()]
 
 
+def _norm(name):
+    # LLM extractions disagree on case/punctuation/spacing; compare on bare alphanumerics
+    return re.sub(r"[^a-z0-9]", "", (name or "").lower())
+
+
+def _names_match(a_doc, b_doc):
+    return (_norm(a_doc.get("provider_name")) == _norm(b_doc.get("provider_name"))
+            and _norm(a_doc.get("patient_name")) == _norm(b_doc.get("patient_name")))
+
+
 def find_awaiting_eob_case(provider_name, patient_name):
+    probe = {"provider_name": provider_name, "patient_name": patient_name}
     for case in open_cases():
         bill = case.get("docs", {}).get("bill")
-        if case["state"] == config.AWAITING_DOCS and bill:
-            # case-insensitive: EOBs and bills rarely agree on capitalization
-            if (bill["provider_name"].lower() == provider_name.lower()
-                    and bill["patient_name"].lower() == patient_name.lower()):
-                return case
+        if case["state"] == config.AWAITING_DOCS and bill and _names_match(bill, probe):
+            return case
+    return None
+
+
+def find_awaiting_bill_case(provider_name, patient_name):
+    """Reverse twin: an EOB that arrived while its bill was still extracting."""
+    probe = {"provider_name": provider_name, "patient_name": patient_name}
+    for case in open_cases():
+        eob = case.get("docs", {}).get("eob")
+        if case["state"] == config.AWAITING_DOCS and eob and _names_match(eob, probe):
+            return case
     return None
 
 

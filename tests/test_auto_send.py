@@ -101,3 +101,22 @@ def test_eob_merges_then_auto_sends(sender, billing_account, monkeypatch):
     assert case["docs"].get("eob")
     assert sent, "matching EOB should have triggered an auto-send"
     assert sent[0][0] == billing_email, "auto-send goes to the bill's billing address"
+
+def test_eob_first_then_bill_merges(sender, billing_account, monkeypatch):
+    """EOB arrived while the bill was still extracting: the bill's extraction must
+    find the parked EOB and finish the case (the reverse-merge path)."""
+    provider, billing_email = billing_account
+    sent = []
+    monkeypatch.setattr(gmail, "send", lambda *a, **k: sent.append(a))
+    eob_id = _process("claims@insurer.example", "EOB",
+                      f"EXPLANATION OF BENEFITS {provider} Jane Doe")
+    parked = store.load(eob_id)
+    assert parked["state"] == config.AWAITING_DOCS
+    assert parked["docs"].get("eob"), "EOB must be persisted on its own case while parked"
+
+    bill_id = _process(sender, "Hospital bill", f"STATEMENT {provider}")
+    assert store.load(eob_id)["state"] == config.CLOSED, "parked EOB case merges and closes"
+    case = store.load(bill_id)
+    assert case["state"] == config.AWAITING_REPLY
+    assert case["docs"].get("eob")
+    assert sent and sent[0][0] == billing_email
