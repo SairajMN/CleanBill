@@ -1,4 +1,4 @@
-# CleanBill 🏥💸
+# CleanBill
 
 **The AI billing advocate that lives in your inbox.** ClearBill watches for hospital
 bills and insurance EOBs, cross-references them, catches overcharges, writes the
