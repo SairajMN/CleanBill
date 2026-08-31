@@ -11,20 +11,19 @@ multi-step background workflow, not a chatbot).
 ## Architecture
 
 ```mermaid
-flowchart LR
+flowchart TD
     A[Gmail inbox: bills + EOBs] -->|poll unread| P[Poller]
     U[Web upload: PDF / DOCX / image / paste] --> API[FastAPI on Cloud Run]
     P --> ORCH[Orchestrator: case state machine]
     API --> ORCH
 
     subgraph Agents[Google ADK agents on Vertex AI Gemini 3.5]
-        I[intake_agent: bill / EOB / reply / noise]
-        E[extractor_agent: structured line items]
-        R[reconciliation_agent: duplicate / pricing / undocumented]
-        D[dispute_draft_agent: formal letter, Gemini 3.7 Flash]
+        I[intake_agent: bill / EOB / reply / noise] --> E[extractor_agent: structured line items]
+        E --> R[reconciliation_agent: duplicate / pricing / undocumented]
+        R --> D[dispute_draft_agent: formal letter, Gemini 3.7 Flash]
     end
 
-    ORCH --> I --> E --> R --> D
+    ORCH --> I
     ORCH <--> FS[(Firestore: case state, cost ledger, approvals)]
     D --> G[Human approval gate: pending_approval]
     G -->|one tap or auto| S[action_agent sends branded HTML dispute]
