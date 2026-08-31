@@ -1,7 +1,7 @@
 # ClearBill — Test Report
 
 All runs against live **Vertex AI** (Gemini 3.5 Flash / 3.7 Flash), live **Cloud Firestore**,
-auto-dispute emails delivered to `resell.it.here@gmail.com` (the bill's declared
+auto-dispute emails delivered to `Billing Quentions Email[resell.it.here@gmail.com]` (the bill's declared
 "Billing questions" address). Run date: 2026-08-31.
 
 ## Environment A — real Gmail inbox, local poller (full end-to-end)
